@@ -18,7 +18,11 @@ public class PlayerControl : MonoBehaviour {
 
 	private Vector2 clickStart; // the mouse position of the inital click
 	private Vector2 clickFinish; // last mouse position click
+
+	private Vector2 shotAngle;
 	private float clickAngle;
+	private float clickAngleX;
+	private float clickAngleY;
 	private Vector3 mouseDistance;
 	private float clickDistance;
 
@@ -54,6 +58,9 @@ public class PlayerControl : MonoBehaviour {
 		theCamera = FindObjectOfType<CameraControl> ();
 		mouseDistanceStore = mouseDistance;
 		theLineRenderer.sortingOrder = 2;
+		shotAngle.x = 1;
+		shotAngle.y = 1;
+
 	}
 
 	void Update () {
@@ -90,8 +97,6 @@ public class PlayerControl : MonoBehaviour {
 			clickDistance = Vector2.Distance (clickStart, clickFinish);
 			clickAngle = CalculateAngle (clickStart, clickFinish) - 90;
 
-			Debug.Log (clickAngle);
-
 			if(Input.GetAxis("Mouse X")<0){
 				mouseDistance.x++;
 			}
@@ -114,14 +119,24 @@ public class PlayerControl : MonoBehaviour {
 		}
 		if ((Input.GetKeyUp (KeyCode.Space) || Input.GetMouseButtonUp (0)) && grounded && !inAir) {// end the jump
 			if(clickAngle >= 0 && clickAngle <= 90){
-				myRigidBody.velocity = (clickAngle * new Vector2(1,1)) * clickDistance;
+				//myRigidBody.velocity = (clickAngle * shotAngle.normalized) * clickDistance;//working
+
+				clickAngleX = 90 - clickAngle;
+				clickAngleY = 0 + clickAngle;
+
+				Debug.Log(clickAngleX);
+				Debug.Log(clickAngleY);
+
+
+				myRigidBody.AddForce(transform.up * clickAngleY * clickDistance);
+				myRigidBody.AddForce(transform.right * clickAngleX * clickDistance);
+
 				jumpSound.Play (); // play the sound 
 			}
 			moveSpeed = moveSpeedTemp; // go back to normal speed
 			theScoreManager.scoreIncreasing = true;
 			inAir = true;
 			mouseDistance = mouseDistanceStore;
-
 		}
 		myAnimator.SetFloat ("Speed", moveSpeed); // animations
 		myAnimator.SetBool ("Grounded", grounded);
