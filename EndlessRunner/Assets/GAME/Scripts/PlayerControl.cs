@@ -1,17 +1,14 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine;
+using System.Collections;
 
 public class PlayerControl : MonoBehaviour {
 
 	public float moveSpeed; // the main movement speed
 	private float moveSpeedTemp; // temp movement speed to call after jumping 
 
-	private float jumpForceX; // the force of the jump between calculations
-	private float jumpForceY;
-
-	public float jumpForceXMax;
-	public float jumpForceYMax;
-
+	public float jumpForceMax;
 	private bool inAir;
 
 	public float speedMultiplier; // how much the speed will increase by every interval
@@ -19,11 +16,11 @@ public class PlayerControl : MonoBehaviour {
 	public float speedIncreasePoint; // the interval distance
 	private float speedPoint; // the accumulated distance traveled
 
-	private Vector3 clickStart; // the mouse position of the inital click
-	private Vector3 clickFinish; // last mouse position click
+	private Vector2 clickStart; // the mouse position of the inital click
+	private Vector2 clickFinish; // last mouse position click
 	private float clickAngle;
-	private Vector3 linePos;
 	private Vector3 mouseDistance;
+	private float clickDistance;
 
 	public bool grounded; // is the player on the ground
 	public LayerMask whatIsGround; // the layer of ground
@@ -41,7 +38,7 @@ public class PlayerControl : MonoBehaviour {
 	private float speedPointStore;
 	private float speedIncreaseStore;
 	private Vector3 mouseDistanceStore;
-	 
+
 	public AudioSource jumpSound; // audio sources
 	public AudioSource deathSound;
 
@@ -77,7 +74,7 @@ public class PlayerControl : MonoBehaviour {
 		if (grounded) {
 			myRigidBody.velocity = new Vector2 (moveSpeed, myRigidBody.velocity.y); // updating the running speed
 		}
-			
+
 		if ((Input.GetKeyDown (KeyCode.Space) || Input.GetMouseButtonDown (0)) && grounded) { // this is the jumping
 			theScoreManager.scoreIncreasing = false;
 			clickStart = Input.mousePosition;
@@ -87,13 +84,13 @@ public class PlayerControl : MonoBehaviour {
 		}
 
 		if ((Input.GetKey (KeyCode.Space) || Input.GetMouseButton (0)) && grounded && !inAir) { // end the jump
-			
+
 			clickFinish = Input.mousePosition;
 
-			jumpForceX = clickStart.x - clickFinish.x ; 
-			jumpForceY = clickStart.y - clickFinish.y ;
+			clickDistance = Vector2.Distance (clickStart, clickFinish);
+			clickAngle = CalculateAngle (clickStart, clickFinish) - 90;
 
-			clickAngle = CalculateAngle (clickStart, clickFinish);
+			Debug.Log (clickAngle);
 
 			if(Input.GetAxis("Mouse X")<0){
 				mouseDistance.x++;
@@ -107,20 +104,17 @@ public class PlayerControl : MonoBehaviour {
 			if(Input.GetAxis("Mouse Y")>0){
 				mouseDistance.y--;
 			}
-				
+
 			theLineRenderer.SetPosition (0,myRigidBody.transform.position);
 			theLineRenderer.SetPosition (1,myRigidBody.transform.position - mouseDistance/20);
-		
-			if (jumpForceX > jumpForceXMax) { // if the force is too much slow them down
-				jumpForceX = jumpForceXMax;
-			}
-			if (jumpForceY > jumpForceYMax) {
-				jumpForceY = jumpForceYMax;
+
+			if (clickDistance > jumpForceMax) {
+				clickDistance = jumpForceMax;
 			}
 		}
 		if ((Input.GetKeyUp (KeyCode.Space) || Input.GetMouseButtonUp (0)) && grounded && !inAir) {// end the jump
-			if(clickAngle >= 90 && clickAngle <= 180){
-				myRigidBody.velocity = new Vector2 (jumpForceX, jumpForceY); // jump based on the force
+			if(clickAngle >= 0 && clickAngle <= 90){
+				myRigidBody.velocity = (clickAngle * new Vector2(1,1)) * clickDistance;
 				jumpSound.Play (); // play the sound 
 			}
 			moveSpeed = moveSpeedTemp; // go back to normal speed

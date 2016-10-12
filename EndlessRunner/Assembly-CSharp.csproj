@@ -6,7 +6,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{96BA96C3-248F-86ED-FF19-2950AB403DA5}</ProjectGuid>
+    <ProjectGuid>{0AB39ACD-2EE6-E15C-4D2B-642E1651D37D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -49,6 +49,7 @@
      <Compile Include="Assets\GAME\Scripts\CoinGenerator.cs" />
      <Compile Include="Assets\GAME\Scripts\DeathMenu.cs" />
      <Compile Include="Assets\GAME\Scripts\EnemyGenerator.cs" />
+     <Compile Include="Assets\GAME\Scripts\FindNewAngle.cs" />
      <Compile Include="Assets\GAME\Scripts\GameManager.cs" />
      <Compile Include="Assets\GAME\Scripts\MainMenu.cs" />
      <Compile Include="Assets\GAME\Scripts\ObjectPooler.cs" />
