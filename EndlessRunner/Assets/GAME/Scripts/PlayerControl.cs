@@ -19,7 +19,6 @@ public class PlayerControl : MonoBehaviour {
 	private Vector2 clickStart; // the mouse position of the inital click
 	private Vector2 clickFinish; // last mouse position click
 
-	private Vector2 shotAngle;
 	private float clickAngle;
 	private float clickAngleX;
 	private float clickAngleY;
@@ -58,9 +57,6 @@ public class PlayerControl : MonoBehaviour {
 		theCamera = FindObjectOfType<CameraControl> ();
 		mouseDistanceStore = mouseDistance;
 		theLineRenderer.sortingOrder = 2;
-		shotAngle.x = 1;
-		shotAngle.y = 1;
-
 	}
 
 	void Update () {
@@ -111,7 +107,7 @@ public class PlayerControl : MonoBehaviour {
 			}
 
 			theLineRenderer.SetPosition (0,myRigidBody.transform.position);
-			theLineRenderer.SetPosition (1,myRigidBody.transform.position - mouseDistance/20);
+			theLineRenderer.SetPosition (1,myRigidBody.transform.position - mouseDistance);
 
 			if (clickDistance > jumpForceMax) {
 				clickDistance = jumpForceMax;
@@ -119,14 +115,9 @@ public class PlayerControl : MonoBehaviour {
 		}
 		if ((Input.GetKeyUp (KeyCode.Space) || Input.GetMouseButtonUp (0)) && grounded && !inAir) {// end the jump
 			if(clickAngle >= 0 && clickAngle <= 90){
-				//myRigidBody.velocity = (clickAngle * shotAngle.normalized) * clickDistance;//working
 
 				clickAngleX = 90 - clickAngle;
 				clickAngleY = 0 + clickAngle;
-
-				Debug.Log(clickAngleX);
-				Debug.Log(clickAngleY);
-
 
 				myRigidBody.AddForce(transform.up * clickAngleY * clickDistance);
 				myRigidBody.AddForce(transform.right * clickAngleX * clickDistance);
@@ -153,8 +144,6 @@ public class PlayerControl : MonoBehaviour {
 		}
 	}
 	public static float CalculateAngle(Vector3 from, Vector3 to) { // Courtesy of https://gist.github.com/shiwano/0f236469cd2ce2f4f585
-
 		return Quaternion.FromToRotation(Vector3.up, to - from).eulerAngles.z;
-
 	}
 }
